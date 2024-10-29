@@ -116,7 +116,7 @@ jobs:
   linux:
     name: 'Linux'
     runs-on: ubuntu-latest
-    container: debian:oldstable-slim
+    container: debian:11-slim
 
     steps:
       - name: Checkout
