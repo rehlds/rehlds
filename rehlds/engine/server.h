@@ -95,13 +95,6 @@ typedef enum redirect_e
 	RD_PACKET = 2,
 } redirect_t;
 
-typedef enum server_state_e
-{
-	ss_dead = 0,
-	ss_loading = 1,
-	ss_active = 2,
-} server_state_t;
-
 typedef struct server_s
 {
 	qboolean active;
@@ -468,6 +461,7 @@ void SV_QueryMovevarsChanged(void);
 void SV_SendServerinfo(sizebuf_t *msg, client_t *client);
 void SV_SendServerinfo_internal(sizebuf_t *msg, client_t *client);
 void SV_SendResources(sizebuf_t *msg);
+void SV_SendResources_internal(sizebuf_t *msg);
 void SV_WriteClientdataToMessage(client_t *client, sizebuf_t *msg);
 void SV_WriteSpawn(sizebuf_t *msg);
 void SV_SendUserReg(sizebuf_t *msg);

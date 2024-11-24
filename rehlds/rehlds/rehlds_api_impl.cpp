@@ -885,6 +885,10 @@ IRehldsHookRegistry_SV_AllowPhysent* CRehldsHookchains::SV_AllowPhysent() {
 	return &m_SV_AllowPhysent;
 }
 
+IRehldsHookRegistry_SV_SendResources* CRehldsHookchains::SV_SendResources() {
+	return &m_SV_SendResources;
+}
+
 int EXT_FUNC CRehldsApi::GetMajorVersion()
 {
 	return REHLDS_API_VERSION_MAJOR;
@@ -911,6 +915,10 @@ IRehldsServerStatic* EXT_FUNC CRehldsApi::GetServerStatic() {
 
 IRehldsServerData* EXT_FUNC CRehldsApi::GetServerData() {
 	return &g_RehldsServerData;
+}
+
+IMessageManager* EXT_FUNC CRehldsApi::GetMessageManager() {
+	return &MessageManager();
 }
 
 IRehldsFlightRecorder* EXT_FUNC CRehldsApi::GetFlightRecorder() {
