@@ -161,8 +161,8 @@ void CSimplePlatform::SteamAPI_RegisterCallback(CCallbackBase *pCallback, int iC
 	::SteamAPI_RegisterCallback(pCallback, iCallback);
 }
 
-bool CSimplePlatform::SteamAPI_Init() {
-	return ::SteamAPI_Init();
+ESteamAPIInitResult CSimplePlatform::SteamAPI_InitInternal(const char *pszInternalCheckInterfaceVersions, SteamErrMsg *pOutErrMsg) {
+	return ::SteamInternal_SteamAPI_Init(pszInternalCheckInterfaceVersions, pOutErrMsg);
 }
 
 void CSimplePlatform::SteamAPI_UnregisterCallResult(class CCallbackBase *pCallback, SteamAPICall_t hAPICall) {
@@ -174,7 +174,7 @@ ISteamApps* CSimplePlatform::SteamApps() {
 }
 
 bool CSimplePlatform::SteamGameServer_Init(uint32 unIP, uint16 usSteamPort, uint16 usGamePort, uint16 usQueryPort, EServerMode eServerMode, const char *pchVersionString) {
-	return ::SteamGameServer_Init(unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString);
+	return ::SteamGameServer_Init(unIP, usGamePort, usQueryPort, eServerMode, pchVersionString);
 }
 
 ISteamGameServer* CSimplePlatform::SteamGameServer() {

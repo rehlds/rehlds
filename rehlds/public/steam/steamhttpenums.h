@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//====== Copyright © 1996-2010, Valve Corporation, All rights reserved. =======
 //
 // Purpose: HTTP related enums, stuff that is shared by both clients and servers, and our
 // UI projects goes here.
@@ -20,13 +20,14 @@ enum EHTTPMethod
 	k_EHTTPMethodGET,
 	k_EHTTPMethodHEAD,
 	k_EHTTPMethodPOST,
-
-	// The remaining HTTP methods are not yet supported, per rfc2616 section 5.1.1 only GET and HEAD are required for 
-	// a compliant general purpose server.  We'll likely add more as we find uses for them.
-
-	// k_EHTTPMethodOPTIONS,
 	k_EHTTPMethodPUT,
 	k_EHTTPMethodDELETE,
+	k_EHTTPMethodOPTIONS,
+	k_EHTTPMethodPATCH,
+
+	// The remaining HTTP methods are not yet supported, per rfc2616 section 5.1.1 only GET and HEAD are required for
+	// a compliant general purpose server.  We'll likely add more as we find uses for them.
+
 	// k_EHTTPMethodTRACE,
 	// k_EHTTPMethodCONNECT
 };
@@ -61,10 +62,11 @@ enum EHTTPStatusCode
 	k_EHTTPStatusCode305UseProxy =				305,
 	//k_EHTTPStatusCode306Unused =				306, (used in old HTTP spec, now unused in 1.1)
 	k_EHTTPStatusCode307TemporaryRedirect =		307,
+	k_EHTTPStatusCode308PermanentRedirect =		308,
 
 	// Error codes
 	k_EHTTPStatusCode400BadRequest =			400,
-	k_EHTTPStatusCode401Unauthorized =			401,
+	k_EHTTPStatusCode401Unauthorized =			401, // You probably want 403 or something else. 401 implies you're sending a WWW-Authenticate header and the client can sent an Authorization header in response.
 	k_EHTTPStatusCode402PaymentRequired =		402, // This is reserved for future HTTP specs, not really supported by clients
 	k_EHTTPStatusCode403Forbidden =				403,
 	k_EHTTPStatusCode404NotFound =				404,
@@ -81,6 +83,9 @@ enum EHTTPStatusCode
 	k_EHTTPStatusCode415UnsupportedMediaType =	415,
 	k_EHTTPStatusCode416RequestedRangeNotSatisfiable = 416,
 	k_EHTTPStatusCode417ExpectationFailed =		417,
+	k_EHTTPStatusCode4xxUnknown = 				418, // 418 is reserved, so we'll use it to mean unknown
+	k_EHTTPStatusCode429TooManyRequests	=		429,
+	k_EHTTPStatusCode444ConnectionClosed =		444, // nginx only?
 
 	// Server error codes
 	k_EHTTPStatusCode500InternalServerError =	500,
@@ -89,6 +94,12 @@ enum EHTTPStatusCode
 	k_EHTTPStatusCode503ServiceUnavailable =	503,
 	k_EHTTPStatusCode504GatewayTimeout =		504,
 	k_EHTTPStatusCode505HTTPVersionNotSupported = 505,
+	k_EHTTPStatusCode5xxUnknown =				599,
 };
+
+inline bool BIsHTTPStatusSuccess( EHTTPStatusCode eStatus )
+{
+	return eStatus >= 200 && eStatus <= 299;
+}
 
 #endif // STEAMHTTPENUMS_H

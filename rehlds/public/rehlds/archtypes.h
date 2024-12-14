@@ -45,7 +45,7 @@ typedef __int32 intp;				// intp is an integer that can accomodate a pointer
 typedef unsigned __int32 uintp;		// (ie, sizeof(intp) >= sizeof(int) && sizeof(intp) >= sizeof(void *)
 
 #else /* _WIN32 */
-typedef char int8;
+typedef signed char int8;
 typedef unsigned char uint8;
 typedef short int16;
 typedef unsigned short uint16;

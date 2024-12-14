@@ -316,7 +316,7 @@ void CSteam3Server::Activate()
 		{
 			if (!gfNoMasterServer && g_psvs.maxclients > 1)
 			{
-				CRehldsPlatformHolder::get()->SteamGameServer()->EnableHeartbeats(true);
+				CRehldsPlatformHolder::get()->SteamGameServer()->SetAdvertiseServerActive(true);
 				double fMasterHeartbeatTimeout = 200.0;
 				if (!Q_strcmp(gamedir, "dmc"))
 					fMasterHeartbeatTimeout = 150.0;
@@ -325,7 +325,7 @@ void CSteam3Server::Activate()
 				if (!Q_strcmp(gamedir, "cstrike"))
 					fMasterHeartbeatTimeout = 400.0;
 
-				CRehldsPlatformHolder::get()->SteamGameServer()->SetHeartbeatInterval((int)fMasterHeartbeatTimeout);
+				CRehldsPlatformHolder::get()->SteamGameServer()->SetMasterServerHeartbeatInterval((int)fMasterHeartbeatTimeout);
 				CSteam3Server::NotifyOfLevelChange(true);
 			}
 		}
@@ -336,7 +336,7 @@ void CSteam3Server::Shutdown()
 {
 	if (m_bLoggedOn)
 	{
-		SteamGameServer()->EnableHeartbeats(0);
+		SteamGameServer()->SetAdvertiseServerActive(false);
 		SteamGameServer()->LogOff();
 
 		SteamGameServer_Shutdown();
@@ -829,10 +829,7 @@ qboolean Steam_GSBSecurePreference()
 
 TSteamGlobalUserID Steam_Steam3IDtoSteam2(uint64 unSteamID)
 {
-	class CSteamID steamID = unSteamID;
-	TSteamGlobalUserID steam2ID;
-	steamID.ConvertToSteam2(&steam2ID);
-	return steam2ID;
+	return SteamIDToSteam2UserID(unSteamID);
 }
 
 uint64 Steam_StringToSteamID(const char *pStr)
@@ -841,11 +838,11 @@ uint64 Steam_StringToSteamID(const char *pStr)
 	if (Steam3Server())
 	{
 		CSteamID serverSteamId(Steam3Server()->GetSteamID());
-		steamID.SetFromSteam2String(pStr, serverSteamId.GetEUniverse());
+		SteamIDFromSteam2String(pStr, serverSteamId.GetEUniverse(), &steamID);
 	}
 	else
 	{
-		steamID.SetFromSteam2String(pStr, k_EUniversePublic);
+		SteamIDFromSteam2String(pStr, k_EUniversePublic, &steamID);
 	}
 
 	return steamID.ConvertToUint64();
@@ -912,14 +909,14 @@ void Master_SetMaster_f()
 			if (gfNoMasterServer)
 			{
 				gfNoMasterServer = FALSE;
-				CRehldsPlatformHolder::get()->SteamGameServer()->EnableHeartbeats(gfNoMasterServer != 0);
+				CRehldsPlatformHolder::get()->SteamGameServer()->SetAdvertiseServerActive(gfNoMasterServer != 0);
 			}
 		}
 	}
 	else
 	{
 		gfNoMasterServer = TRUE;
-		CRehldsPlatformHolder::get()->SteamGameServer()->EnableHeartbeats(gfNoMasterServer != 0);
+		CRehldsPlatformHolder::get()->SteamGameServer()->SetAdvertiseServerActive(gfNoMasterServer != 0);
 	}
 }
 

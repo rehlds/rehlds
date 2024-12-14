@@ -45,8 +45,8 @@ public:
 	virtual void SteamAPI_SetBreakpadAppID(uint32 unAppID) = 0;
 	virtual void SteamAPI_UseBreakpadCrashHandler(char const *pchVersion, char const *pchDate, char const *pchTime, bool bFullMemoryDumps, void *pvContext, PFNPreMinidumpCallback m_pfnPreMinidumpCallback) = 0;
 	virtual void SteamAPI_RegisterCallback(CCallbackBase *pCallback, int iCallback) = 0;
-	virtual bool SteamAPI_Init() = 0;
-	virtual void SteamAPI_UnregisterCallResult(class CCallbackBase *pCallback, SteamAPICall_t hAPICall) = 0;
+	virtual ESteamAPIInitResult SteamAPI_InitInternal(const char *pszInternalCheckInterfaceVersions, SteamErrMsg *pOutErrMsg) = 0;
+	virtual void SteamAPI_UnregisterCallResult(CCallbackBase *pCallback, SteamAPICall_t hAPICall) = 0;
 	virtual ISteamApps* SteamApps() = 0;
 	virtual bool SteamGameServer_Init(uint32 unIP, uint16 usSteamPort, uint16 usGamePort, uint16 usQueryPort, EServerMode eServerMode, const char *pchVersionString) = 0;
 	virtual ISteamGameServer* SteamGameServer() = 0;
@@ -102,8 +102,8 @@ public:
 	virtual void SteamAPI_SetBreakpadAppID(uint32 unAppID);
 	virtual void SteamAPI_UseBreakpadCrashHandler(char const *pchVersion, char const *pchDate, char const *pchTime, bool bFullMemoryDumps, void *pvContext, PFNPreMinidumpCallback m_pfnPreMinidumpCallback);
 	virtual void SteamAPI_RegisterCallback(CCallbackBase *pCallback, int iCallback);
-	virtual bool SteamAPI_Init();
-	virtual void SteamAPI_UnregisterCallResult(class CCallbackBase *pCallback, SteamAPICall_t hAPICall);
+	virtual ESteamAPIInitResult SteamAPI_InitInternal(const char *pszInternalCheckInterfaceVersions, SteamErrMsg *pOutErrMsg);
+	virtual void SteamAPI_UnregisterCallResult(CCallbackBase *pCallback, SteamAPICall_t hAPICall);
 	virtual ISteamApps* SteamApps();
 	virtual bool SteamGameServer_Init(uint32 unIP, uint16 usSteamPort, uint16 usGamePort, uint16 usQueryPort, EServerMode eServerMode, const char *pchVersionString);
 	virtual ISteamGameServer* SteamGameServer();

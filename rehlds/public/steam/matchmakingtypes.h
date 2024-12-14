@@ -1,6 +1,6 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright � 1996-2008, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -8,20 +8,8 @@
 #ifndef MATCHMAKINGTYPES_H
 #define MATCHMAKINGTYPES_H
 
-#ifdef _WIN32
-#pragma once
-#endif
-
-#ifdef POSIX
-#ifndef _snprintf
-#define _snprintf snprintf
-#endif
-#endif
-
 #include <stdio.h>
 #include <string.h>
-
-#include "common.h" //Q_snprinf
 
 //
 // Max size (in bytes of UTF-8 data, not in characters) of server fields, including null terminator.
@@ -34,6 +22,11 @@ const int k_cbMaxGameServerName = 64;
 const int k_cbMaxGameServerTags = 128;
 const int k_cbMaxGameServerGameData = 2048;
 
+/// Store key/value pair used in matchmaking queries.
+///
+/// Actually, the name Key/Value is a bit misleading.  The "key" is better
+/// understood as "filter operation code" and the "value" is the operand to this
+/// filter operation.  The meaning of the operand depends upon the filter.
 struct MatchMakingKeyValuePair_t
 {
 	MatchMakingKeyValuePair_t() { m_szKey[0] = m_szValue[0] = 0; }
@@ -58,17 +51,14 @@ enum EMatchMakingServerResponse
 
 // servernetadr_t is all the addressing info the serverbrowser needs to know about a game server,
 // namely: its IP, its connection port, and its query port.
-class servernetadr_t 
+class servernetadr_t
 {
 public:
-	
+
+	servernetadr_t() : m_usConnectionPort( 0 ), m_usQueryPort( 0 ), m_unIP( 0 ) {}
+
 	void	Init( unsigned int ip, uint16 usQueryPort, uint16 usConnectionPort );
 
-// Uncompatible feature commented
-//#ifdef NETADR_H
-//	netadr_t	GetIPAndQueryPort();
-//#endif
-	
 	// Access the query port.
 	uint16	GetQueryPort() const;
 	void	SetQueryPort( uint16 usPort );
@@ -79,7 +69,7 @@ public:
 
 	// Access the IP
 	uint32 GetIP() const;
-	void SetIP( uint32 );
+	void SetIP( uint32 unIP );
 
 	// This gets the 'a.b.c.d:port' string with the connection port (instead of the query port).
 	const char *GetConnectionAddressString() const;
@@ -94,7 +84,7 @@ public:
 		m_unIP = that.m_unIP;
 	}
 
-	
+
 private:
 	const char *ToString( uint32 unIP, uint16 usPort ) const;
 	uint16	m_usConnectionPort;	// (in HOST byte order)
@@ -109,14 +99,6 @@ inline void	servernetadr_t::Init( unsigned int ip, uint16 usQueryPort, uint16 us
 	m_usQueryPort = usQueryPort;
 	m_usConnectionPort = usConnectionPort;
 }
-
-// Uncompatible feature commented
-//#ifdef NETADR_H
-//inline netadr_t servernetadr_t::GetIPAndQueryPort()
-//{
-//	return netadr_t( m_unIP, m_usQueryPort );
-//}
-//#endif
 
 inline uint16 servernetadr_t::GetQueryPort() const
 {
@@ -154,9 +136,9 @@ inline const char *servernetadr_t::ToString( uint32 unIP, uint16 usPort ) const
 	static int nBuf = 0;
 	unsigned char *ipByte = (unsigned char *)&unIP;
 #ifdef VALVE_BIG_ENDIAN
-	Q_snprintf (s[nBuf], sizeof( s[nBuf] ), "%u.%u.%u.%u:%i", (int)(ipByte[0]), (int)(ipByte[1]), (int)(ipByte[2]), (int)(ipByte[3]), usPort );
+	snprintf(s[nBuf], sizeof( s[nBuf] ), "%u.%u.%u.%u:%i", (int)(ipByte[0]), (int)(ipByte[1]), (int)(ipByte[2]), (int)(ipByte[3]), usPort );
 #else
-	Q_snprintf (s[nBuf], sizeof( s[nBuf] ), "%u.%u.%u.%u:%i", (int)(ipByte[3]), (int)(ipByte[2]), (int)(ipByte[1]), (int)(ipByte[0]), usPort );
+	snprintf(s[nBuf], sizeof( s[nBuf] ), "%u.%u.%u.%u:%i", (int)(ipByte[3]), (int)(ipByte[2]), (int)(ipByte[1]), (int)(ipByte[0]), usPort );
 #endif
 	const char *pchRet = s[nBuf];
 	++nBuf;
@@ -171,7 +153,7 @@ inline const char* servernetadr_t::GetConnectionAddressString() const
 
 inline const char* servernetadr_t::GetQueryAddressString() const
 {
-	return ToString( m_unIP, m_usQueryPort );	
+	return ToString( m_unIP, m_usQueryPort );
 }
 
 inline bool servernetadr_t::operator<(const servernetadr_t &netadr) const

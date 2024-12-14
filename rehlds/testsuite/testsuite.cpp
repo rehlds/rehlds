@@ -137,9 +137,9 @@ void __cdecl SteamAPI_RunCallbacks_hooked()
 	CRehldsPlatformHolder::get()->SteamAPI_RunCallbacks();
 }
 
-bool __cdecl SteamAPI_Init_hooked()
+ESteamAPIInitResult __cdecl SteamInternal_SteamAPI_InitInternal_hooked(const char *pszInternalCheckInterfaceVersions, SteamErrMsg *pOutErrMsg)
 {
-	return CRehldsPlatformHolder::get()->SteamAPI_Init();
+	return CRehldsPlatformHolder::get()->SteamAPI_InitInternal(pszInternalCheckInterfaceVersions, pOutErrMsg);
 }
 
 ISteamUser* __cdecl SteamUser_hooked()
@@ -167,11 +167,6 @@ void __cdecl SteamAPI_Shutdown_hooked()
 void __cdecl SteamGameServer_Shutdown_hooked()
 {
 	CRehldsPlatformHolder::get()->SteamGameServer_Shutdown();
-}
-
-bool __cdecl SteamGameServer_Init_hooked(uint32 unIP, uint16 usSteamPort, uint16 usGamePort, uint16 usQueryPort, EServerMode eServerMode, const char *pchVersionString)
-{
-	return CRehldsPlatformHolder::get()->SteamGameServer_Init(unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString);
 }
 
 void __cdecl SteamAPI_UnregisterCallback_hooked(class CCallbackBase *pCallback)
@@ -244,8 +239,9 @@ void InstallImportTableHook(PIMAGE_THUNK_DATA thunk, void* func)
 }
 
 void TestSuite_InstallHooks(const Module* engine) {
+
 	HMODULE hKernel32 = getModuleHandleOrDie("kernel32.dll");
-	HMODULE hWinSock32 = getModuleHandleOrDie("wsock32.dll");
+	HMODULE hWinSock32 = getModuleHandleOrDie("ws2_32.dll");
 	HMODULE hSteamApi = getModuleHandleOrDie("steam_api.dll");
 
 
@@ -273,26 +269,24 @@ void TestSuite_InstallHooks(const Module* engine) {
 	void* SteamAPI_WriteMiniDump_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_WriteMiniDump");
 	void* SteamAPI_RegisterCallback_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_RegisterCallback");
 	void* SteamAPI_RunCallbacks_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_RunCallbacks");
-	void* SteamAPI_Init_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_Init");
-	void* SteamUser_addr = getProcAddressOrDie(hSteamApi, "SteamUser");
-	void* SteamFriends_addr = getProcAddressOrDie(hSteamApi, "SteamFriends");
+	void* SteamInternal_SteamAPI_InitInternal_addr = getProcAddressOrDie(hSteamApi, "SteamInternal_SteamAPI_Init");
+	void* SteamUser_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_SteamUser_v023");
+	void* SteamFriends_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_SteamFriends_v017");
 	void* SteamGameServer_RunCallbacks_addr = getProcAddressOrDie(hSteamApi, "SteamGameServer_RunCallbacks");
 	void* SteamAPI_Shutdown_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_Shutdown");
 	void* SteamGameServer_Shutdown_addr = getProcAddressOrDie(hSteamApi, "SteamGameServer_Shutdown");
-	void* SteamGameServer_Init_addr = getProcAddressOrDie(hSteamApi, "SteamGameServer_Init");
 	void* SteamAPI_UnregisterCallback_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_UnregisterCallback");
-	void* SteamGameServer_addr = getProcAddressOrDie(hSteamApi, "SteamGameServer");
+	void* SteamGameServer_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_SteamGameServer_v015");
 	void* SteamAPI_SetBreakpadAppID_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_SetBreakpadAppID");
 	void* SteamAPI_RegisterCallResult_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_RegisterCallResult");
-	void* SteamHTTP_addr = getProcAddressOrDie(hSteamApi, "SteamHTTP");
+	void* SteamHTTP_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_SteamHTTP_v003");
 	void* SteamAPI_UnregisterCallResult_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_UnregisterCallResult");
-	void* SteamApps_addr = getProcAddressOrDie(hSteamApi, "SteamApps");
+	void* SteamApps_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_SteamApps_v008");
 	void* SteamAPI_UseBreakpadCrashHandler_addr = getProcAddressOrDie(hSteamApi, "SteamAPI_UseBreakpadCrashHandler");
 
-	
 	PIMAGE_DOS_HEADER peHeader = (PIMAGE_DOS_HEADER)engine->base;
 	PIMAGE_NT_HEADERS ntHeader = (PIMAGE_NT_HEADERS)(engine->base + peHeader->e_lfanew);
-	
+
 	PIMAGE_IMPORT_DESCRIPTOR impDesc = (PIMAGE_IMPORT_DESCRIPTOR)(ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress + engine->base);
 	for (; impDesc->Name; impDesc++)
 	{
@@ -383,7 +377,7 @@ void TestSuite_InstallHooks(const Module* engine) {
 				{
 					InstallImportTableHook(thunk, &SteamAPI_WriteMiniDump_hooked);
 				}
-				else if (fptr == SteamAPI_RegisterCallback_addr)
+				if (fptr == SteamAPI_RegisterCallback_addr)
 				{
 					InstallImportTableHook(thunk, &SteamAPI_RegisterCallback_hooked);
 				}
@@ -391,9 +385,9 @@ void TestSuite_InstallHooks(const Module* engine) {
 				{
 					InstallImportTableHook(thunk, &SteamAPI_RunCallbacks_hooked);
 				}
-				else if (fptr == SteamAPI_Init_addr)
+				else if (fptr == SteamInternal_SteamAPI_InitInternal_addr)
 				{
-					InstallImportTableHook(thunk, &SteamAPI_Init_hooked);
+					InstallImportTableHook(thunk, &SteamInternal_SteamAPI_InitInternal_hooked);
 				}
 				else if (fptr == SteamUser_addr)
 				{
@@ -414,10 +408,6 @@ void TestSuite_InstallHooks(const Module* engine) {
 				else if (fptr == SteamGameServer_Shutdown_addr)
 				{
 					InstallImportTableHook(thunk, &SteamGameServer_Shutdown_hooked);
-				}
-				else if (fptr == SteamGameServer_Init_addr)
-				{
-					InstallImportTableHook(thunk, &SteamGameServer_Init_hooked);
 				}
 				else if (fptr == SteamAPI_UnregisterCallback_addr)
 				{

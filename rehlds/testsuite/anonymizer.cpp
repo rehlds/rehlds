@@ -186,7 +186,7 @@ bool CSteamAppsAnonymizingWrapper::MarkContentCorrupt(bool bMissingFilesOnly)
 	//return false;
 }
 
-uint32 CSteamAppsAnonymizingWrapper::GetInstalledDepots(DepotId_t *pvecDepots, uint32 cMaxDepots)
+uint32 CSteamAppsAnonymizingWrapper::GetInstalledDepots(AppId_t appID, DepotId_t *pvecDepots, uint32 cMaxDepots)
 {
 	rehlds_syserror("%s: not implemented", __func__);
 	//return 0;
@@ -196,6 +196,76 @@ uint32 CSteamAppsAnonymizingWrapper::GetAppInstallDir(AppId_t appID, char *pchFo
 {
 	rehlds_syserror("%s: not implemented", __func__);
 	//return 0;
+}
+
+bool CSteamAppsAnonymizingWrapper::BIsAppInstalled(AppId_t appID)
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+CSteamID CSteamAppsAnonymizingWrapper::GetAppOwner()
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+const char *CSteamAppsAnonymizingWrapper::GetLaunchQueryParam(const char *pchKey)
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+bool CSteamAppsAnonymizingWrapper::GetDlcDownloadProgress(AppId_t nAppID, uint64 *punBytesDownloaded, uint64 *punBytesTotal)
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+int CSteamAppsAnonymizingWrapper::GetAppBuildId()
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+void CSteamAppsAnonymizingWrapper::RequestAllProofOfPurchaseKeys()
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+SteamAPICall_t CSteamAppsAnonymizingWrapper::GetFileDetails(const char *pszFileName)
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+int CSteamAppsAnonymizingWrapper::GetLaunchCommandLine(char *pszCommandLine, int cubCommandLine)
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+bool CSteamAppsAnonymizingWrapper::BIsSubscribedFromFamilySharing()
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+bool CSteamAppsAnonymizingWrapper::BIsTimedTrial(uint32 *punSecondsAllowed, uint32 *punSecondsPlayed)
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+bool CSteamAppsAnonymizingWrapper::SetDlcContext(AppId_t nAppID)
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+int CSteamAppsAnonymizingWrapper::GetNumBetas(int *pnAvailable, int *pnPrivate)
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+bool CSteamAppsAnonymizingWrapper::GetBetaInfo(int iBetaIndex, uint32 *punFlags, uint32 *punBuildID, char *pchBetaName, int cchBetaName, char *pchDescription, int cchDescription)
+{
+	rehlds_syserror("%s: not implemented", __func__);
+}
+
+bool CSteamAppsAnonymizingWrapper::SetActiveBeta(const char *pchBetaName)
+{
+	rehlds_syserror("%s: not implemented", __func__);
 }
 
 
@@ -235,7 +305,7 @@ void CSteamGameServerAnonymizingWrapper::SetDedicatedServer(bool bDedicated)
 	m_Wrapped->SetDedicatedServer(bDedicated);
 }
 
-void CSteamGameServerAnonymizingWrapper::LogOn(const char *pszAccountName, const char *pszPassword)
+void CSteamGameServerAnonymizingWrapper::LogOn(const char *pszToken)
 {
 	rehlds_syserror("%s: not implemented", __func__);
 }
@@ -365,7 +435,7 @@ bool CSteamGameServerAnonymizingWrapper::BUpdateUserData(CSteamID steamIDUser, c
 	return res;
 }
 
-HAuthTicket CSteamGameServerAnonymizingWrapper::GetAuthSessionTicket(void *pTicket, int cbMaxTicket, uint32 *pcbTicket)
+HAuthTicket CSteamGameServerAnonymizingWrapper::GetAuthSessionTicket(void *pTicket, int cbMaxTicket, uint32 *pcbTicket, const SteamNetworkingIdentity *pSnid)
 {
 	rehlds_syserror("%s: not implemented", __func__);
 	//return k_HAuthTicketInvalid;
@@ -410,7 +480,7 @@ SteamAPICall_t CSteamGameServerAnonymizingWrapper::GetServerReputation()
 	//return k_uAPICallInvalid;
 }
 
-uint32 CSteamGameServerAnonymizingWrapper::GetPublicIP()
+SteamIPAddress_t CSteamGameServerAnonymizingWrapper::GetPublicIP()
 {
 	rehlds_syserror("%s: not implemented", __func__);
 	//return 0;
@@ -419,7 +489,7 @@ uint32 CSteamGameServerAnonymizingWrapper::GetPublicIP()
 bool CSteamGameServerAnonymizingWrapper::HandleIncomingPacket(const void *pData, int cbData, uint32 srcIP, uint16 srcPort)
 {
 	uint32 realIp = m_Anonymizer->Fake2RealIp(htonl(srcIP), __func__);
-	
+
 	bool res;
 	if (m_Anonymizer->m_OriginalConnectPacketLen) {
 		res = m_Wrapped->HandleIncomingPacket(m_Anonymizer->m_OriginalConnectPacketData, m_Anonymizer->m_OriginalConnectPacketLen, ntohl(realIp), srcPort);
@@ -451,17 +521,17 @@ int CSteamGameServerAnonymizingWrapper::GetNextOutgoingPacket(void *pOut, int cb
 	return res;
 }
 
-void CSteamGameServerAnonymizingWrapper::EnableHeartbeats(bool bActive)
+void CSteamGameServerAnonymizingWrapper::SetAdvertiseServerActive(bool bActive)
 {
-	m_Wrapped->EnableHeartbeats(bActive);
+	m_Wrapped->SetAdvertiseServerActive(bActive);
 }
 
-void CSteamGameServerAnonymizingWrapper::SetHeartbeatInterval(int iHeartbeatInterval)
+void CSteamGameServerAnonymizingWrapper::SetMasterServerHeartbeatInterval(int iHeartbeatInterval)
 {
-	m_Wrapped->SetHeartbeatInterval(iHeartbeatInterval);
+	m_Wrapped->SetMasterServerHeartbeatInterval(iHeartbeatInterval);
 }
 
-void CSteamGameServerAnonymizingWrapper::ForceHeartbeat()
+void CSteamGameServerAnonymizingWrapper::ForceMasterServerHeartbeat()
 {
 	rehlds_syserror("%s: not implemented", __func__);
 }
@@ -682,9 +752,9 @@ void CAnonymizingEngExtInterceptor::SteamAPI_RegisterCallback(CCallbackBase *pCa
 
 }
 
-bool CAnonymizingEngExtInterceptor::SteamAPI_Init()
+ESteamAPIInitResult CAnonymizingEngExtInterceptor::SteamAPI_InitInternal(const char *pszInternalCheckInterfaceVersions, SteamErrMsg *pOutErrMsg)
 {
-	bool res = m_BasePlatform->SteamAPI_Init();
+	ESteamAPIInitResult res = m_BasePlatform->SteamAPI_InitInternal(pszInternalCheckInterfaceVersions, pOutErrMsg);
 	return res;
 }
 
@@ -711,7 +781,7 @@ ISteamApps* CAnonymizingEngExtInterceptor::SteamApps()
 	} else {
 		m_BasePlatform->SteamApps();
 	}
-	
+
 	return m_SteamAppsWrapper;
 }
 
@@ -873,10 +943,10 @@ void CAnonymizingEngExtInterceptor::AnonymizeSteamId(const CSteamID& real, const
 
 void CAnonymizingEngExtInterceptor::AnonymizeSteamId(const char* real, const char* fake) {
 	CSteamID realId;
-	realId.SetFromSteam2String(real, k_EUniversePublic);
+	SteamIDFromSteam2String(real, k_EUniversePublic, &realId);
 
 	CSteamID fakeId;
-	fakeId.SetFromSteam2String(fake, k_EUniversePublic);
+	SteamIDFromSteam2String(fake, k_EUniversePublic, &fakeId);
 
 	AnonymizeSteamId(realId, fakeId);
 }
@@ -933,7 +1003,7 @@ void CAnonymizingEngExtInterceptor::ProcessConnectPacket(uint8* data, unsigned i
 
 	int protocol = Q_atoi(Cmd_Argv(1));
 	int challenge = Q_atoi(Cmd_Argv(2));
-	
+
 	strncpy(protinfo, Cmd_Argv(3), ARRAYSIZE(protinfo));
 	protinfo[ARRAYSIZE(protinfo) - 1] = 0;
 

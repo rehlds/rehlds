@@ -268,7 +268,7 @@ public:
 
 public:
 	CGetTimeZoneInfoCall() { memset(&m_Res, 0, sizeof(m_Res)); }
-	
+
 	void SetResult(LPTIME_ZONE_INFORMATION res) { m_Res = *res; }
 	virtual bool compareInputArgs(IEngExtCall* other, bool strict);
 	virtual std::string toString();
@@ -370,7 +370,7 @@ public:
 	int m_Len;
 	int m_Flags;
 	int m_FromLenIn;
-	
+
 	char m_Data[8192];
 	int m_FromLenOut;
 	char m_From[32];
@@ -544,16 +544,27 @@ public:
 
 class CSteamApiInitCall : public IEngExtCall {
 public:
-	bool m_Res;
+	ESteamAPIInitResult m_Res;
+	char m_szCheckInterfaceVersions[2048];
+	int m_nCheckInterfaceVersionsLen;
+	SteamErrMsg m_szOutErrMsg;
+	int m_nOutErrMsgLen;
 
 public:
-	CSteamApiInitCall() { m_Res = false; }
-	void setResult(bool res) { m_Res = res; }
-	
-	
+	CSteamApiInitCall()
+	{
+		m_Res = k_ESteamAPIInitResult_FailedGeneric;
+		memset(m_szCheckInterfaceVersions, 0, sizeof(m_szCheckInterfaceVersions)); m_nCheckInterfaceVersionsLen = 0;
+		memset(m_szOutErrMsg, 0, sizeof(m_szOutErrMsg)); m_nOutErrMsgLen = 0;
+	}
+	CSteamApiInitCall(const char *pszInternalCheckInterfaceVersions, SteamErrMsg &pOutErrMsg);
+	void setResult(ESteamAPIInitResult res) { m_Res = res; }
+
 	virtual bool compareInputArgs(IEngExtCall* other, bool strict);
 	virtual std::string toString();
 	virtual ExtCallFuncs getOpcode() { return ECF_STEAM_API_INIT; }
+	virtual void writePrologue(std::ostream &stream);
+	virtual void readPrologue(std::istream &stream);
 	virtual void writeEpilogue(std::ostream &stream);
 	virtual void readEpilogue(std::istream &stream);
 };
@@ -907,7 +918,7 @@ public:
 	int m_Result;
 	uint32 m_Addr;
 	uint16 m_Port;
-	
+
 public:
 	CGameServerGetNextOutgoingPacketCall() { m_MaxOut = 0; m_BufLen = m_Result = 0; m_Addr = 0; m_Port = 0; }
 	CGameServerGetNextOutgoingPacketCall(int maxOut);
@@ -1111,9 +1122,9 @@ public:
 	FILETIME m_UserTime;
 
 public:
-	CGetProcessTimesCall() { 
-		m_Res = FALSE; 
-		memset(&m_CreationTime, 0, sizeof(m_CreationTime)); 
+	CGetProcessTimesCall() {
+		m_Res = FALSE;
+		memset(&m_CreationTime, 0, sizeof(m_CreationTime));
 		memset(&m_ExitTime, 0, sizeof(m_ExitTime));
 		memset(&m_KernelTime, 0, sizeof(m_KernelTime));
 		memset(&m_UserTime, 0, sizeof(m_UserTime));

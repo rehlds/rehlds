@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-bool CSteamID::SetFromSteam2String(const char *pchSteam2ID, EUniverse eUniverse)
+bool SteamIDFromSteam2String(const char *pchSteam2ID, EUniverse eUniverse, CSteamID *pSteamIDOut)
 {
 	Assert(pchSteam2ID);
 
@@ -27,6 +27,6 @@ bool CSteamID::SetFromSteam2String(const char *pchSteam2ID, EUniverse eUniverse)
 		return false;
 
 	// Now convert to steam ID from the Steam2 ID structure
-	SetFromSteam2(&steam2ID, eUniverse);
+	*pSteamIDOut = SteamIDFromSteam2UserID(&steam2ID, eUniverse);
 	return true;
 }

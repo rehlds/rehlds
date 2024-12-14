@@ -30,7 +30,12 @@
 
 #include "maintypes.h"
 #include "common.h"
+
+#if !defined(INCLUDED_STEAM_STEAMUSERIDTYPES_H)
+#define INCLUDED_STEAM2_USERID_STRUCTS
 #include "common/SteamCommon.h"
+#endif
+
 #include "public/steam/steam_api.h"
 #include "public/steam/steam_gameserver.h"
 #include "public/steam/steamclientpublic.h"

@@ -1137,11 +1137,28 @@ void CSteamApiRegisterCallbackCall::readEpilogue(std::istream &stream) {
 /* ============================================================================
 						 CSteamApiInitCall
 ============================================================================ */
+CSteamApiInitCall::CSteamApiInitCall(const char *pszInternalCheckInterfaceVersions, SteamErrMsg &pOutErrMsg)
+{
+	m_nCheckInterfaceVersionsLen = strlen(pszInternalCheckInterfaceVersions) + 1;
+	if (m_nCheckInterfaceVersionsLen > sizeof(m_szCheckInterfaceVersions))
+		rehlds_syserror("%s: too long check interfaces version string", __func__);
+
+	memcpy(m_szCheckInterfaceVersions, pszInternalCheckInterfaceVersions, m_nCheckInterfaceVersionsLen);
+
+	m_nOutErrMsgLen = strlen(pOutErrMsg) + 1;
+	if (m_nOutErrMsgLen > sizeof(m_szOutErrMsg))
+		rehlds_syserror("%s: too long outerror message string", __func__);
+
+	memcpy(m_szOutErrMsg, pOutErrMsg, m_nOutErrMsgLen);
+
+	m_Res = k_ESteamAPIInitResult_FailedGeneric;
+}
 
 std::string CSteamApiInitCall::toString()
 {
 	std::stringstream ss;
-	ss << "CSteamApiInitCall( ) => " << m_Res;
+	ss << "SteamAPI_Init( szCheckInterfaceVersions: " << m_szCheckInterfaceVersions
+		<< "; szOutErrMsg: " << m_szOutErrMsg << " ) => " << m_Res;
 	return ss.str();
 }
 
@@ -1151,7 +1168,36 @@ bool CSteamApiInitCall::compareInputArgs(IEngExtCall* other, bool strict)
 	if (otherCall == NULL)
 		return false;
 
+	if (otherCall->m_nCheckInterfaceVersionsLen != m_nCheckInterfaceVersionsLen)
+		return false;
+
+	if (strcmp(otherCall->m_szCheckInterfaceVersions, m_szCheckInterfaceVersions))
+		return false;
+
+	if (otherCall->m_nOutErrMsgLen != m_nOutErrMsgLen)
+		return false;
+
+	if (strcmp(otherCall->m_szOutErrMsg, m_szOutErrMsg))
+		return false;
+
 	return true;
+}
+
+void CSteamApiInitCall::writePrologue(std::ostream &stream) {
+	stream
+		.write((char*)&m_nCheckInterfaceVersionsLen, sizeof(m_nCheckInterfaceVersionsLen))
+		.write((char*)&m_nOutErrMsgLen, sizeof(m_nOutErrMsgLen))
+		.write(m_szCheckInterfaceVersions, m_nCheckInterfaceVersionsLen)
+		.write(m_szOutErrMsg, m_nOutErrMsgLen);
+}
+
+void CSteamApiInitCall::readPrologue(std::istream &stream)
+{
+	stream
+		.read((char *)&m_nCheckInterfaceVersionsLen, sizeof(m_nCheckInterfaceVersionsLen))
+		.read((char *)&m_nOutErrMsgLen, sizeof(m_nOutErrMsgLen));
+	stream.read(m_szCheckInterfaceVersions, m_nCheckInterfaceVersionsLen);
+	stream.read(m_szOutErrMsg, m_nOutErrMsgLen);
 }
 
 void CSteamApiInitCall::writeEpilogue(std::ostream &stream) {
@@ -1159,7 +1205,7 @@ void CSteamApiInitCall::writeEpilogue(std::ostream &stream) {
 }
 
 void CSteamApiInitCall::readEpilogue(std::istream &stream) {
-	m_Res = false;
+	m_Res = k_ESteamAPIInitResult_FailedGeneric;
 	stream.read((char*)&m_Res, 1);
 }
 
