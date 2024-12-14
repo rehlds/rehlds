@@ -132,7 +132,7 @@ void Master::RunFrame(double time)
 				INetwork *network = m_MasterSocket->GetNetwork();
 				NetAddress *netAdr = network->GetLocalAddress();
 
-				if (SteamGameServer_Init(ntohl(*(u_long *)&netAdr->m_IP[0]), 0, 0, 0xFFFFu, eServerModeNoAuthentication, MASTER_VERSION))
+				if (SteamGameServer_Init(ntohl(*(u_long *)&netAdr->m_IP[0]), 0, 0xFFFFu, eServerModeNoAuthentication, MASTER_VERSION))
 				{
 					SteamGameServer()->SetProduct("hltv");
 					SteamGameServer()->SetGameDescription("hltv");
@@ -141,7 +141,7 @@ void Master::RunFrame(double time)
 					SteamGameServer()->SetSpectatorPort(htons(netAdr->m_Port));
 					SteamGameServer()->LogOnAnonymous();
 
-					SteamGameServer()->EnableHeartbeats(true);
+					SteamGameServer()->SetAdvertiseServerActive(true);
 				}
 				else
 				{
@@ -221,7 +221,7 @@ void Master::CMD_Heartbeat(char *cmdLine)
 	}
 
 	if (SteamGameServer()) {
-		SteamGameServer()->ForceHeartbeat();
+		SteamGameServer()->ForceMasterServerHeartbeat();
 	}
 }
 
@@ -243,7 +243,7 @@ void Master::CMD_NoMaster(char *cmdLine)
 	m_NoMaster = Q_atoi(params.GetToken(1)) ? true : false;
 
 	if (bOldMasterState != m_NoMaster) {
-		SteamGameServer()->EnableHeartbeats(m_NoMaster);
+		SteamGameServer()->SetAdvertiseServerActive(m_NoMaster);
 	}
 }
 
@@ -287,7 +287,7 @@ void Master::SendShutdown()
 	}
 
 	if (SteamGameServer()) {
-		SteamGameServer()->EnableHeartbeats(false);
+		SteamGameServer()->SetAdvertiseServerActive(false);
 	}
 }
 
