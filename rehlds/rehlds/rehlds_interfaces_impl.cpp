@@ -904,8 +904,8 @@ IGameClient* GetRehldsApiClient(client_t* cl)
 	return g_GameClients[idx];
 }
 
-ISteamGameServer* EXT_FUNC CRehldsServerData::GetSteamGameServer() {
-	return ::SteamGameServer();
+ISteamGameServer011* EXT_FUNC CRehldsServerData::GetSteamGameServer() {
+	return ::SteamGameServer_v011();
 }
 
 netadr_t* EXT_FUNC CRehldsServerData::GetNetFrom() {

@@ -29,6 +29,7 @@
 #include "maintypes.h"
 #include "rehlds_interfaces.h"
 #include "server.h"
+#include "steam_adapter/gameserver011.h"
 
 const int NET_DECOMPRESS_MAX_TIMES = 10;
 
@@ -309,7 +310,7 @@ public:
 	virtual void SetResourcesNum(int num);
 	virtual struct resource_s *GetResource(int index);
 	virtual void SetName(const char* name);
-	virtual ISteamGameServer *GetSteamGameServer();
+	virtual ISteamGameServer011 *GetSteamGameServer();
 	virtual netadr_t *GetNetFrom();
 	virtual double GetOldTime();
 

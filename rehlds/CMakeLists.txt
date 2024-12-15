@@ -184,6 +184,7 @@ set(ENGINE_SRCS
 	rehlds/rehlds_interfaces_impl.cpp
 	rehlds/rehlds_messagemngr_impl.cpp
 	rehlds/rehlds_security.cpp
+	rehlds/steam_adapter/gameserver011.cpp
 )
 
 set(UNITTESTS_SRCS

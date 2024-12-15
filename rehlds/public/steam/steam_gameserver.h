@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2008, Valve Corporation, All rights reserved. =======
+//====== Copyright  1996-2008, Valve Corporation, All rights reserved. =======
 //
 // Purpose:
 //
@@ -12,6 +12,7 @@
 
 #include "steam_api.h"
 #include "isteamgameserver.h"
+#include "isteamgameserver011.h"
 #include "isteamgameserverstats.h"
 
 enum EServerMode

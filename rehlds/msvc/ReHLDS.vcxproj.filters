@@ -51,6 +51,9 @@
     <Filter Include="dlls">
       <UniqueIdentifier>{c91850f0-8e81-47e5-9a5f-53215766e960}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rehlds\steam_adapter">
+      <UniqueIdentifier>{4e2d8487-e3d7-44e0-a4e7-1ab2aae5d5d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\common.cpp">
@@ -343,6 +346,9 @@
     </ClCompile>
     <ClCompile Include="..\rehlds\rehlds_messagemngr_impl.cpp">
       <Filter>rehlds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rehlds\steam_adapter\gameserver011.cpp">
+      <Filter>rehlds\steam_adapter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1125,6 +1131,12 @@
     </ClInclude>
     <ClInclude Include="..\public\steam\steamuniverse.h">
       <Filter>public\steam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\steam\isteamgameserver011.h">
+      <Filter>public\steam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rehlds\steam_adapter\gameserver011.h">
+      <Filter>rehlds\steam_adapter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

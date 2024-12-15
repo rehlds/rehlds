@@ -25,7 +25,7 @@ public:
 //
 
 	/// This is called by SteamGameServer_Init, and you will usually not need to call it directly
-	STEAM_PRIVATE_API( virtual bool InitGameServer( uint32 unIP, uint16 usGamePort, uint16 usQueryPort, uint32 unFlags, AppId_t nGameAppId, const char *pchVersionString ) = 0; )
+	virtual bool InitGameServer( uint32 unIP, uint16 usGamePort, uint16 usQueryPort, uint32 unFlags, AppId_t nGameAppId, const char *pchVersionString ) = 0;
 
 	/// Game product identifier.  This is currently used by the master server for version checking purposes.
 	/// It's a required field, but will eventually will go away, and the AppID will be used for this purpose.
@@ -256,14 +256,13 @@ public:
 	// Return Value: true if successful, false if failure (ie, steamIDUser wasn't for an active player)
 	virtual bool BUpdateUserData( CSteamID steamIDUser, const char *pchPlayerName, uint32 uScore ) = 0;
 
-// Deprecated functions.  These will be removed in a future version of the SDK.
+// DEPRECATED!
+// These will be removed in a future version of the SDK.
 // If you really need these, please contact us and help us understand what you are
 // using them for.
 
-//	STEAM_PRIVATE_API(
-		virtual void SetMasterServerHeartbeatInterval( int iHeartbeatInterval ) = 0;
-		virtual void ForceMasterServerHeartbeat() = 0;
-//	)
+	virtual void SetMasterServerHeartbeatInterval( int iHeartbeatInterval ) = 0;
+	virtual void ForceMasterServerHeartbeat() = 0;
 };
 
 #define STEAMGAMESERVER_INTERFACE_VERSION "SteamGameServer015"
