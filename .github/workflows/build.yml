@@ -112,7 +112,9 @@ jobs:
         env:
           demo: ${{ matrix.test.file }}
           desc: ${{ matrix.test.desc }}
-        run: ./runTest.sh
+        run: |
+          mv $GITHUB_WORKSPACE/rehlds/lib/steam_api.dll .
+          ./runTest.sh
 
   linux:
     name: 'Linux'
