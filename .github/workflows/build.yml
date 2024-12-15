@@ -53,6 +53,7 @@ jobs:
           mkdir publish\tests
           mkdir publish\bin\win32\valve\dlls
           move "msvc\${{ env.buildReleasePlay }}\swds.dll" publish\tests\swds.dll
+          move rehlds\lib\steam_api.dll publish\bin\win32\steam_api.dll
           move msvc\${{ env.buildRelease }}\hlds.exe publish\bin\win32\hlds.exe
           move msvc\${{ env.buildRelease }}\hltv.exe publish\bin\win32\hltv.exe
           move msvc\${{ env.buildRelease }}\swds.dll publish\bin\win32\swds.dll
@@ -107,14 +108,13 @@ jobs:
           chown root ~
           rsync -a deps/rehlds/* .
           mv $GITHUB_WORKSPACE/tests/swds.dll .
+          mv $GITHUB_WORKSPACE/bin/win32/steam_api.dll .
 
       - name: Play test
         env:
           demo: ${{ matrix.test.file }}
           desc: ${{ matrix.test.desc }}
-        run: |
-          mv $GITHUB_WORKSPACE/rehlds/lib/steam_api.dll .
-          ./runTest.sh
+        run: ./runTest.sh
 
   linux:
     name: 'Linux'
@@ -178,6 +178,7 @@ jobs:
       - name: Move files
         run: |
           mkdir -p publish/bin/linux32/valve/dlls
+          mv rehlds/lib/linux32/libsteam_api.so publish/bin/linux32/libsteam_api.so
           mv build/rehlds/engine_i486.so publish/bin/linux32/engine_i486.so
           mv rehlds/version/appversion.h publish/appversion.h
           mv build/rehlds/dedicated/hlds_linux publish/bin/linux32/hlds_linux
@@ -192,6 +193,7 @@ jobs:
         run: |
           binaries=(
             "publish/bin/linux32/engine_i486.so"
+            "publish/bin/linux32/libsteam_api.so"
             "publish/bin/linux32/hlds_linux"
             "publish/bin/linux32/hltv"
             "publish/bin/linux32/core.so"
