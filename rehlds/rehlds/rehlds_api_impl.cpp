@@ -458,6 +458,16 @@ void EXT_FUNC RemoveCvarListener_api(const char *var_name, cvar_callback_t func)
 	}
 }
 
+void EXT_FUNC SV_SetMoveVars_api()
+{
+	SV_SetMoveVars(&sv_movevars);
+}
+
+void EXT_FUNC SV_WriteMovevarsToClient_api(sizebuf_t *message)
+{
+	SV_WriteMovevarsToClient(message, &sv_movevars);
+}
+
 CRehldsServerStatic g_RehldsServerStatic;
 CRehldsServerData g_RehldsServerData;
 CRehldsHookchains g_RehldsHookchains;
@@ -475,8 +485,8 @@ RehldsFuncs_t g_RehldsApiFuncs =
 	&SV_CheckChallenge_api,
 	&SV_SendUserReg,
 	&SV_WriteDeltaDescriptionsToClient,
-	&SV_SetMoveVars,
-	&SV_WriteMovevarsToClient,
+	&SV_SetMoveVars_api,
+	&SV_WriteMovevarsToClient_api,
 	&GetClientFallback_api,
 	&GetAllowCheats_api,
 	&GSBSecure_api,
