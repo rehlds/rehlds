@@ -30,8 +30,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_SHARED_LIBRARY_CXX_FLAGS "")
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
-set(COMPILE_FLAGS "-m32 -U_FORTIFY_SOURCE")
-set(LINK_FLAGS "-m32")
+set(COMPILE_FLAGS "-m32 -fno-pic -fno-pie -U_FORTIFY_SOURCE")
+set(LINK_FLAGS "-m32 -no-pie -Wl,--no-export-dynamic")
 
 set(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -fno-rtti -fno-exceptions")
 
@@ -219,7 +219,6 @@ if (CMAKE_BUILD_TYPE MATCHES Unittests)
 		add_subdirectory(../dep/cppunitlite cppunitlite)
 	endif()
 
-	set(LINK_FLAGS "${LINK_FLAGS} -no-pie -Wl,--no-export-dynamic")
 	add_executable(engine ${appversion.sh} ${ENGINE_SRCS})
 	target_link_libraries(engine PRIVATE cppunitlite)
 else()
